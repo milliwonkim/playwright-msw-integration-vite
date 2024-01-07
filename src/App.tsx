@@ -1,99 +1,55 @@
-import Box from "@mui/material/Box";
-import { useQuery } from "@tanstack/react-query";
-import { api } from "./api/api";
-import {
-  Key,
-  ReactElement,
-  JSXElementConstructor,
-  ReactNode,
-  ReactPortal,
-  useState,
-} from "react";
+import * as React from "react";
+import Button from "@mui/material/Button";
+import TextField from "@mui/material/TextField";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
+import EnhancedTable from "./EnhancedTable";
 
-export default function CustomComponent() {
-  const query = useQuery({
-    queryKey: ["getSport"],
-    queryFn: () =>
-      api.get("/", {
-        params: { all: "true" },
-      }),
-  });
-  const [data, setData] = useState("");
-  console.log("query111", query, import.meta.env);
+export default function FormDialog() {
+  const [open, setOpen] = React.useState(false);
+  const [text, setText] = React.useState("");
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   return (
-    <Box
-      sx={{
-        display: "grid",
-        gridTemplateRows: "72px auto",
-        width: "100%", // 100% of the viewport width
-        height: "100dvh", // 100% of the viewport height
-      }}
-    >
-      <Box sx={{ background: "green" }}></Box>
-      <Box
-        sx={{
-          display: "grid",
-          gridTemplateColumns: "360px auto",
-          boxSizing: "border-box",
-        }}
-      >
-        <Box sx={{ background: "red" }}></Box>
-        <Box
-          sx={{
-            background: "blue",
-            boxSizing: "border-box",
-            display: "grid",
-            gridTemplateColumns: "240px auto",
-          }}
-        >
-          <Box sx={{ background: "yellow" }}>
-            <h1>{data}</h1>
-          </Box>
-          <Box sx={{ background: "purple" }}>
-            {query?.data?.data.map(
-              (odd: {
-                key: Key | null | undefined;
-                title:
-                  | string
-                  | number
-                  | boolean
-                  | ReactElement<any, string | JSXElementConstructor<any>>
-                  | Iterable<ReactNode>
-                  | ReactPortal
-                  | null
-                  | undefined;
-                description:
-                  | string
-                  | number
-                  | boolean
-                  | ReactElement<any, string | JSXElementConstructor<any>>
-                  | Iterable<ReactNode>
-                  | ReactPortal
-                  | null
-                  | undefined;
-                group:
-                  | string
-                  | number
-                  | boolean
-                  | ReactElement<any, string | JSXElementConstructor<any>>
-                  | Iterable<ReactNode>
-                  | ReactPortal
-                  | null
-                  | undefined;
-              }) => {
-                return (
-                  <Box key={odd.key} onClick={() => setData(odd.title)}>
-                    <Box>{odd.title}</Box>
-                    <Box>{odd.description}</Box>
-                    <Box>{odd.group}</Box>
-                  </Box>
-                );
-              }
-            )}
-          </Box>
-        </Box>
-      </Box>
-    </Box>
+    <React.Fragment>
+      <h1>{text}</h1>
+      <Button variant="outlined" onClick={handleClickOpen}>
+        Open form dialog
+      </Button>
+      <Dialog open={open} onClose={handleClose}>
+        <DialogTitle>Subscribe</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            To subscribe to this website, please enter your email address here.
+            We will send updates occasionally.
+          </DialogContentText>
+          <TextField
+            autoFocus
+            margin="dense"
+            id="name"
+            label="Email Address"
+            type="email"
+            fullWidth
+            variant="standard"
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>Cancel</Button>
+          <Button onClick={handleClose}>Subscribe</Button>
+        </DialogActions>
+      </Dialog>
+      <EnhancedTable />
+    </React.Fragment>
   );
 }
